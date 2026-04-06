@@ -1,0 +1,301 @@
+.pageWrapper {
+  width: 100%;
+}
+
+.container {
+  width: 100%;
+  max-width: none;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-sizing: border-box;
+  height: auto;
+}
+
+/* 제목 아이템 */
+.titleItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  border: 2px solid #000;
+  border-radius: 9999px;
+  background-color: #fff;
+}
+
+.checkboxButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.checkboxButton:hover:not(:disabled) {
+  transform: scale(1.1);
+}
+
+.checkboxButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.itemName {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.titleInput {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: #333;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.35;
+  outline: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.titleInput:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* 이미지 + 메모 콘텐츠 영역 */
+.contentArea {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+  min-height: 320px;
+  min-width: 0;
+}
+
+/* 이미지 섹션 */
+.imageSection {
+  flex: 0 0 40%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-width: 0;
+  padding: 10px;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 2px solid #000;
+  border-style: solid;
+  border-radius: 20px;
+  overflow: hidden;
+  background-color: #fff;
+  max-width: 100%;
+}
+
+.imageWrapperEmpty {
+  border-style: dashed;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.imageButton {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  border: none;
+  padding: 0;
+}
+
+.imageButton:hover {
+  background-color: #fff;
+  transform: scale(1.1);
+}
+
+/* 메모 섹션 */
+.memoSection {
+  flex: 0 0 60%;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+  padding: 10px;
+}
+
+.memoHeader {
+  display: none;
+}
+
+.memoInput {
+  width: 100%;
+  flex: 1;
+  min-height: 320px;
+  padding: 72px 14px 14px 14px;
+  border: none;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 14px;
+  resize: none;
+  background-color: transparent;
+  background-image: url(/memo.png);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: #333;
+  line-height: 1.6;
+}
+
+.memoInput::placeholder {
+  color: rgba(0, 0, 0, 0.3);
+}
+
+.memoInput:disabled {
+  opacity: 0.6;
+}
+
+/* 버튼 영역 */
+.buttonGroup {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid #e9e9e9;
+}
+
+.saveButton,
+.deleteButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.saveButton:hover:not(:disabled),
+.deleteButton:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.saveButton:disabled,
+.deleteButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 태블릿 레이아웃 */
+@media (max-width: 1023px) {
+  .container {
+    padding: 18px;
+  }
+
+  .contentArea {
+    flex-direction: column;
+    gap: 18px;
+    min-height: auto;
+  }
+
+  .imageSection {
+    flex: none;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+  }
+
+  .memoSection {
+    flex: none;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+  }
+
+  .imageWrapper {
+    aspect-ratio: 1;
+    max-height: min(56vw, 360px);
+  }
+
+  .memoInput {
+    min-height: 240px;
+  }
+
+  .buttonGroup {
+    justify-content: center;
+    gap: 12px;
+  }
+}
+
+/* 모바일 레이아웃 */
+@media (max-width: 640px) {
+  .pageWrapper {
+    padding: 1rem 0.5rem;
+  }
+
+  .container {
+    padding: 14px;
+    gap: 20px;
+    border-radius: 8px;
+  }
+
+  .titleItem {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .checkboxButton {
+    width: 40px;
+    height: 40px;
+  }
+
+  .itemName {
+    font-size: 0.95rem;
+  }
+
+  .contentArea {
+    gap: 16px;
+  }
+
+  .imageWrapper {
+    border-radius: 16px;
+  }
+
+  .memoInput {
+    min-height: 220px;
+    padding: 64px 12px 12px 12px;
+  }
+
+  .buttonGroup {
+    justify-content: center;
+    gap: 12px;
+  }
+}

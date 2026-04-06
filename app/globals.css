@@ -24,3 +24,34 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+html,
+body {
+  min-height: 100%;
+}
+
+.appMain {
+  flex: 1;
+  width: 100%;
+  background: #f4f5f7;
+  overflow-y: auto;
+}
+
+.appContainer {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2.5rem 1rem;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .appContainer {
+    padding: 1rem 0.5rem;
+  }
+}

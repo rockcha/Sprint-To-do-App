@@ -1,0 +1,25 @@
+import { getTodoItemById } from "@/lib/todo-api";
+
+import DetailTodo from "@/components/DetailTodo";
+const TENANT_ID = process.env.TENANT_ID || "rokchalatte";
+
+export default async function DetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const itemId = parseInt(id, 10);
+
+  if (isNaN(itemId)) {
+    return <div>잘못된 ID입니다.</div>;
+  }
+
+  const item = await getTodoItemById(TENANT_ID, itemId);
+
+  if (!item) {
+    return <div>할 일을 찾을 수 없습니다.</div>;
+  }
+
+  return <DetailTodo initialItem={item} />;
+}
