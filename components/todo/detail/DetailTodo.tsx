@@ -14,6 +14,7 @@ type DetailTodoProps = {
 };
 
 function sanitizeImageUrl(url?: string | null): string {
+  // blob URL은 세션 임시 값이라 새로고침 후 깨지므로 초기값에서 제외한다.
   if (!url || url.startsWith("blob:")) {
     return "";
   }
@@ -44,6 +45,7 @@ function loadImage(src: string): Promise<HTMLImageElement> {
 }
 
 async function compressImageForPatch(file: File): Promise<string | null> {
+  // PATCH payload 제한을 넘지 않도록 이미지 크기/품질을 줄여 data URL로 변환한다.
   const sourceDataUrl = await readFileAsDataUrl(file);
   const img = await loadImage(sourceDataUrl);
 
@@ -163,6 +165,7 @@ export default function DetailTodo({ initialItem, tenantId }: DetailTodoProps) {
     try {
       let uploadedImageUrl: string | null = null;
       if (imageFile) {
+        // 이미지 API가 아닌 PATCH(imageUrl) 스펙에 맞춰 저장 가능한 크기로 변환한다.
         const newImageUrl = await compressImageForPatch(imageFile);
         if (!newImageUrl || !newImageUrl.startsWith("data:image/")) {
           toast.error(

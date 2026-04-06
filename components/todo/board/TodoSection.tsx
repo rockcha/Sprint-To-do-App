@@ -29,6 +29,7 @@ export default function TodoSection({
   const router = useRouter();
 
   const handleGoDetail = (item: TodoItem) => {
+    // 임시 아이템(음수 ID) 또는 업데이트 중 항목은 상세 진입을 막는다.
     if (item.id <= 0 || updatingIds.includes(item.id)) {
       return;
     }
@@ -81,6 +82,7 @@ export default function TodoSection({
                   onClick={() => handleGoDetail(item)}
                   onMouseEnter={() => {
                     if (item.id > 0) {
+                      // 마우스 오버 시 상세 라우트를 미리 받아 전환 체감을 개선한다.
                       router.prefetch(`/items/${item.id}`);
                     }
                   }}

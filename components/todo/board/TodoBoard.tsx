@@ -7,6 +7,7 @@ import DoneSection from "./DoneSection";
 import TodoSection from "./TodoSection";
 import styles from "./TodoBoard.module.css";
 import type { TodoItem } from "@/types/todo";
+import { createTodoItem, updateTodoItem } from "@/lib/todo-api";
 
 type TodoBoardProps = {
   initialItems: TodoItem[];
@@ -14,38 +15,12 @@ type TodoBoardProps = {
   pageSize: number;
 };
 
-function isTodoItem(data: unknown): data is TodoItem {
-  return (
-    typeof data === "object" &&
-    data !== null &&
-    "id" in data &&
-    "name" in data &&
-    "isCompleted" in data
-  );
-}
-
-function extractItem(data: unknown): TodoItem | null {
-  if (isTodoItem(data)) {
-    return data;
-  }
-
-  if (
-    typeof data === "object" &&
-    data !== null &&
-    "item" in data &&
-    isTodoItem((data as { item: unknown }).item)
-  ) {
-    return (data as { item: TodoItem }).item;
-  }
-
-  return null;
-}
-
 export default function TodoBoard({
   initialItems,
   tenantId,
   pageSize,
 }: TodoBoardProps) {
+  // 목록 데이터와 UI 상호작용(입력/페이지/요청중 상태)을 한 곳에서 관리한다.
   const [items, setItems] = useState<TodoItem[]>(initialItems);
   const [draftName, setDraftName] = useState("");
   const [isAdding, setIsAdding] = useState(false);
@@ -78,6 +53,7 @@ export default function TodoBoard({
   );
 
   function createOptimisticItem(name: string): TodoItem {
+    // 서버 응답 전 임시 항목은 음수 ID로 구분한다.
     return {
       id: -Date.now(),
       tenantId,
@@ -95,6 +71,7 @@ export default function TodoBoard({
       return;
     }
 
+    // 생성은 optimistic update로 먼저 반영하고 실패 시 롤백한다.
     setIsAdding(true);
     const optimisticItem = createOptimisticItem(name);
 
@@ -104,25 +81,7 @@ export default function TodoBoard({
     setTodoPage(1);
 
     try {
-      const response = await fetch(
-        `https://assignment-todolist-api.vercel.app/api/${tenantId}/items`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name,
-          }),
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("add-failed");
-      }
-
-      const payload = (await response.json()) as unknown;
-      const createdItem = extractItem(payload);
+      const createdItem = await createTodoItem(tenantId, name);
 
       if (!createdItem) {
         throw new Error("invalid-create-response");
@@ -149,6 +108,7 @@ export default function TodoBoard({
       return;
     }
 
+    // 완료 토글도 optimistic update 후 실패 시 원상복구한다.
     const nextCompleted = !item.isCompleted;
     setUpdatingIds((prev) => [...prev, item.id]);
     setItems((prev) =>
@@ -163,16 +123,11 @@ export default function TodoBoard({
     );
 
     try {
-      const endpoint = `https://assignment-todolist-api.vercel.app/api/${tenantId}/items/${item.id}`;
-      const response = await fetch(endpoint, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ isCompleted: nextCompleted }),
+      const updated = await updateTodoItem(tenantId, item.id, {
+        isCompleted: nextCompleted,
       });
 
-      if (!response.ok) {
+      if (!updated) {
         throw new Error("update-failed");
       }
 

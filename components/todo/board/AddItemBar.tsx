@@ -27,6 +27,7 @@ export default function AddItemBar({
           value={value}
           onChange={(event) => onChange(event.target.value)}
           onKeyDown={(event) => {
+            // 입력창에서도 Enter로 즉시 추가할 수 있도록 처리한다.
             if (event.key === "Enter") {
               event.preventDefault();
               onAdd();
