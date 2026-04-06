@@ -21,6 +21,10 @@ export default async function DetailPage({
     return <div>잘못된 ID입니다.</div>;
   }
 
+  if (itemId <= 0) {
+    return <div>아직 저장 중인 항목입니다. 잠시 후 다시 시도해주세요.</div>;
+  }
+
   const item = await getTodoItemById(TENANT_ID, itemId);
 
   if (!item) {

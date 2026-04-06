@@ -4,11 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "sonner";
-import {
-  updateTodoItem,
-  deleteTodoItem,
-  uploadTodoImage,
-} from "@/lib/todo-api";
+import { updateTodoItem, deleteTodoItem } from "@/lib/todo-api";
 import type { TodoItem } from "@/types/todo";
 import styles from "./DetailTodo.module.css";
 
@@ -22,6 +18,15 @@ function sanitizeImageUrl(url?: string | null): string {
     return "";
   }
   return url;
+}
+
+function fileToDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(new Error("file-read-failed"));
+    reader.readAsDataURL(file);
+  });
 }
 
 export default function DetailTodo({ initialItem, tenantId }: DetailTodoProps) {
@@ -96,22 +101,6 @@ export default function DetailTodo({ initialItem, tenantId }: DetailTodoProps) {
     toast.success("이미지가 선택되었습니다. 수정완료를 눌러주세요.");
   };
 
-  const handleImageUploadToServer = async (
-    file: File,
-  ): Promise<string | null> => {
-    try {
-      const newImageUrl = await uploadTodoImage(tenantId, item.id, file);
-      if (!newImageUrl) {
-        console.error("이미지 업로드 실패: URL이 반환되지 않음");
-        return null;
-      }
-      return newImageUrl;
-    } catch (error) {
-      console.error("이미지 업로드 중 오류:", error);
-      return null;
-    }
-  };
-
   const handleSave = async () => {
     const trimmedTitle = title.trim();
     if (!trimmedTitle) {
@@ -123,14 +112,14 @@ export default function DetailTodo({ initialItem, tenantId }: DetailTodoProps) {
     try {
       let uploadedImageUrl: string | null = null;
       if (imageFile) {
-        const newImageUrl = await handleImageUploadToServer(imageFile);
-        if (newImageUrl) {
-          uploadedImageUrl = newImageUrl;
-          setImageUrl(newImageUrl);
-        } else {
-          toast.error("이미지 업로드 확인에 실패했습니다. 다시 시도해주세요.");
+        const newImageUrl = await fileToDataUrl(imageFile);
+        if (!newImageUrl.startsWith("data:image/")) {
+          toast.error("이미지 변환에 실패했습니다. 다시 시도해주세요.");
           return;
         }
+
+        uploadedImageUrl = newImageUrl;
+        setImageUrl(newImageUrl);
       }
 
       const updateData: Partial<TodoItem> = {

@@ -27,6 +27,14 @@ export default function DoneSection({
   onNextPage,
 }: DoneSectionProps) {
   const router = useRouter();
+
+  const handleGoDetail = (item: TodoItem) => {
+    if (item.id <= 0 || updatingIds.includes(item.id)) {
+      return;
+    }
+    router.push(`/todos/${item.id}`);
+  };
+
   return (
     <section className={styles.sectionCard}>
       <header className={styles.sectionHeader}>
@@ -70,13 +78,17 @@ export default function DoneSection({
               <li key={item.id} className={styles.listItem}>
                 <div
                   className={`${styles.itemRow} ${styles.doneItemRow}`}
-                  onClick={() => router.push(`/todos/${item.id}`)}
-                  onMouseEnter={() => router.prefetch(`/todos/${item.id}`)}
+                  onClick={() => handleGoDetail(item)}
+                  onMouseEnter={() => {
+                    if (item.id > 0) {
+                      router.prefetch(`/todos/${item.id}`);
+                    }
+                  }}
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
-                      router.push(`/todos/${item.id}`);
+                      handleGoDetail(item);
                     }
                   }}
                 >
