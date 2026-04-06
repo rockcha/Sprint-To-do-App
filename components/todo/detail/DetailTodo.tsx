@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "sonner";
 import {
@@ -18,6 +19,7 @@ type DetailTodoProps = {
 };
 
 export default function DetailTodo({ initialItem }: DetailTodoProps) {
+  const router = useRouter();
   const [item, setItem] = useState<TodoItem>(initialItem);
   const [title, setTitle] = useState(initialItem.name);
   const [memo, setMemo] = useState(initialItem.memo || "");
@@ -133,9 +135,8 @@ export default function DetailTodo({ initialItem }: DetailTodoProps) {
       if (updated) {
         setItem(updated);
         toast.success("수정 완료되었습니다!");
-        setTimeout(() => {
-          window.location.href = "/";
-        }, 500);
+        router.replace(`/?refresh=${Date.now()}`);
+        router.refresh();
       } else {
         toast.error("수정에 실패했습니다.");
       }
@@ -158,9 +159,8 @@ export default function DetailTodo({ initialItem }: DetailTodoProps) {
 
       if (success) {
         toast.success("삭제되었습니다!");
-        setTimeout(() => {
-          window.location.href = "/";
-        }, 500);
+        router.replace(`/?refresh=${Date.now()}`);
+        router.refresh();
       } else {
         toast.error("삭제에 실패했습니다.");
       }
@@ -176,33 +176,39 @@ export default function DetailTodo({ initialItem }: DetailTodoProps) {
     <div className={styles.pageWrapper}>
       <div className={styles.container}>
         {/* 상단 제목 아이템 */}
-        <div className={styles.titleItem}>
-          <button
-            className={styles.checkboxButton}
-            onClick={handleToggle}
-            disabled={isLoading}
-          >
-            <Image
-              src={
-                isCompleted
-                  ? "/checkbox-checked.png"
-                  : "/checkbox-unchecked.png"
-              }
-              alt={isCompleted ? "완료" : "미완료"}
-              width={32}
-              height={32}
-              priority
+        <div
+          className={`${styles.titleItem} ${
+            isCompleted ? styles.titleItemCompleted : ""
+          }`}
+        >
+          <div className={styles.titleContent}>
+            <button
+              className={styles.checkboxButton}
+              onClick={handleToggle}
+              disabled={isLoading}
+            >
+              <Image
+                src={
+                  isCompleted
+                    ? "/checkbox-checked.png"
+                    : "/checkbox-unchecked.png"
+                }
+                alt={isCompleted ? "완료" : "미완료"}
+                width={32}
+                height={32}
+                priority
+              />
+            </button>
+            <input
+              type="text"
+              className={styles.titleInput}
+              value={title}
+              onChange={handleTitleChange}
+              disabled={isLoading}
+              maxLength={100}
+              aria-label="할 일 제목"
             />
-          </button>
-          <input
-            type="text"
-            className={styles.titleInput}
-            value={title}
-            onChange={handleTitleChange}
-            disabled={isLoading}
-            maxLength={100}
-            aria-label="할 일 제목"
-          />
+          </div>
         </div>
 
         {/* 이미지 + 메모 영역 */}

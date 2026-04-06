@@ -5,7 +5,7 @@ import Image from "next/image";
 import styles from "./TodoBoard.module.css";
 import type { TodoItem } from "@/types/todo";
 
-type TodoSectionProps = {
+type DoneSectionProps = {
   items: TodoItem[];
   pagedItems: TodoItem[];
   currentPage: number;
@@ -16,7 +16,7 @@ type TodoSectionProps = {
   onNextPage: () => void;
 };
 
-export default function TodoSection({
+export default function DoneSection({
   items,
   pagedItems,
   currentPage,
@@ -25,14 +25,14 @@ export default function TodoSection({
   onToggle,
   onPrevPage,
   onNextPage,
-}: TodoSectionProps) {
+}: DoneSectionProps) {
   const router = useRouter();
   return (
     <section className={styles.sectionCard}>
       <header className={styles.sectionHeader}>
         <Image
-          src="/todo.png"
-          alt="Todo"
+          src="/done.png"
+          alt="Done"
           width={95}
           height={36}
           className={styles.sectionTitleImage}
@@ -45,23 +45,23 @@ export default function TodoSection({
           <div className={styles.emptyState}>
             <div className={styles.emptyWrap}>
               <Image
-                src="/todo-empty.png"
-                alt="할 일 없음"
+                src="/done-empty.png"
+                alt="완료 항목 없음"
                 width={228}
                 height={180}
                 className={styles.emptyDesktop}
               />
               <Image
-                src="/todo-empty-small.png"
-                alt="할 일 없음"
+                src="/done-empty-small.png"
+                alt="완료 항목 없음"
                 width={180}
                 height={140}
                 className={styles.emptyMobile}
               />
             </div>
             <p className={styles.emptyText}>
-              할 일이 없어요.. <br />
-              TODO를 새롭게 추가해주세요!
+              아직 다 한 일이 없어요. <br />
+              해야 할 일을 체크해보세요!
             </p>
           </div>
         ) : (
@@ -69,8 +69,9 @@ export default function TodoSection({
             {pagedItems.map((item) => (
               <li key={item.id} className={styles.listItem}>
                 <div
-                  className={styles.itemRow}
+                  className={`${styles.itemRow} ${styles.doneItemRow}`}
                   onClick={() => router.push(`/todos/${item.id}`)}
+                  onMouseEnter={() => router.prefetch(`/todos/${item.id}`)}
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => {
@@ -97,12 +98,14 @@ export default function TodoSection({
                           : "/checkbox-unchecked.png"
                       }
                       alt=""
-                      width={20}
-                      height={20}
+                      width={30}
+                      height={30}
                       className={styles.checkboxImage}
                     />
                   </button>
-                  <span className={styles.itemName}>{item.name}</span>
+                  <span className={`${styles.itemName} ${styles.doneItemName}`}>
+                    {item.name}
+                  </span>
                 </div>
               </li>
             ))}
@@ -113,7 +116,7 @@ export default function TodoSection({
       {items.length > 0 && (
         <nav
           className={styles.sectionPagination}
-          aria-label="Todo 페이지네이션"
+          aria-label="Done 페이지네이션"
         >
           <button
             type="button"

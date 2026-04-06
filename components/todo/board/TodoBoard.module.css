@@ -68,15 +68,23 @@
   background-color: #f9f9f9;
 }
 
+.doneItemRow {
+  background-color: #ede9fe;
+}
+
+.doneItemRow:hover {
+  background-color: #ddd6fe;
+}
+
 .checkboxButton {
-  border: 0;
-  padding: 0;
-  width: 20px;
-  height: 20px;
-  background: transparent;
+  width: 42px;
+  height: 42px;
   cursor: pointer;
   line-height: 0;
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .checkboxButton:disabled {

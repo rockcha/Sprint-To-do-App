@@ -59,6 +59,14 @@ export async function getTodoItemsPage(
   };
 }
 
+export async function getTodoItems(
+  tenantId: string,
+  page: number,
+  pageSize: number,
+): Promise<TodoItem[]> {
+  return fetchItems(tenantId, page, pageSize);
+}
+
 export async function getTodoItemById(
   tenantId: string,
   id: number,

@@ -1,10 +1,13 @@
-import { getTodoItemsPage } from "@/lib/todo-api";
-import TodoBoard from "@/components/TodoBoard";
+import { getTodoItems } from "@/lib/todo-api";
+import TodoBoard from "@/components/todo/board/TodoBoard";
 import styles from "./page.module.css";
+
+export const dynamic = "force-dynamic";
 
 const TENANT_ID = process.env.TENANT_ID;
 const DEFAULT_PAGE = 1;
 const DEFAULT_PAGE_SIZE = 10;
+const INITIAL_FETCH_SIZE = 80;
 
 function parsePositiveInt(value: string | undefined, fallback: number): number {
   const parsed = Number(value);
@@ -28,7 +31,7 @@ export default async function Home({ searchParams }: HomeProps) {
   const query = await searchParams;
   const pageSize = parsePositiveInt(query.pageSize, DEFAULT_PAGE_SIZE);
 
-  const { items } = await getTodoItemsPage(TENANT_ID, DEFAULT_PAGE, 200);
+  const items = await getTodoItems(TENANT_ID, DEFAULT_PAGE, INITIAL_FETCH_SIZE);
 
   return (
     <main className={styles.page}>

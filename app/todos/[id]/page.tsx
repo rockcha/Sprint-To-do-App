@@ -1,6 +1,6 @@
 import { getTodoItemById } from "@/lib/todo-api";
+import DetailTodo from "@/components/todo/detail/DetailTodo";
 
-import DetailTodo from "@/components/DetailTodo";
 const TENANT_ID = process.env.TENANT_ID || "rokchalatte";
 
 export default async function DetailPage({
