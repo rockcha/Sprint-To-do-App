@@ -20,13 +20,64 @@ function sanitizeImageUrl(url?: string | null): string {
   return url;
 }
 
-function fileToDataUrl(file: File): Promise<string> {
+function estimateDataUrlBytes(dataUrl: string): number {
+  const base64 = dataUrl.split(",")[1] ?? "";
+  return Math.floor((base64.length * 3) / 4);
+}
+
+function readFileAsDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(String(reader.result));
     reader.onerror = () => reject(new Error("file-read-failed"));
     reader.readAsDataURL(file);
   });
+}
+
+function loadImage(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new window.Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error("image-load-failed"));
+    img.src = src;
+  });
+}
+
+async function compressImageForPatch(file: File): Promise<string | null> {
+  const sourceDataUrl = await readFileAsDataUrl(file);
+  const img = await loadImage(sourceDataUrl);
+
+  const MAX_DIMENSION = 1280;
+  const MAX_PATCH_BYTES = 900 * 1024;
+
+  const ratio = Math.min(1, MAX_DIMENSION / Math.max(img.width, img.height));
+  const targetWidth = Math.max(1, Math.round(img.width * ratio));
+  const targetHeight = Math.max(1, Math.round(img.height * ratio));
+
+  const canvas = document.createElement("canvas");
+  canvas.width = targetWidth;
+  canvas.height = targetHeight;
+
+  const context = canvas.getContext("2d");
+  if (!context) {
+    return null;
+  }
+
+  context.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+  let quality = 0.82;
+  let output = canvas.toDataURL("image/jpeg", quality);
+
+  while (estimateDataUrlBytes(output) > MAX_PATCH_BYTES && quality > 0.35) {
+    quality -= 0.1;
+    output = canvas.toDataURL("image/jpeg", quality);
+  }
+
+  if (estimateDataUrlBytes(output) > MAX_PATCH_BYTES) {
+    return null;
+  }
+
+  return output;
 }
 
 export default function DetailTodo({ initialItem, tenantId }: DetailTodoProps) {
@@ -112,9 +163,11 @@ export default function DetailTodo({ initialItem, tenantId }: DetailTodoProps) {
     try {
       let uploadedImageUrl: string | null = null;
       if (imageFile) {
-        const newImageUrl = await fileToDataUrl(imageFile);
-        if (!newImageUrl.startsWith("data:image/")) {
-          toast.error("이미지 변환에 실패했습니다. 다시 시도해주세요.");
+        const newImageUrl = await compressImageForPatch(imageFile);
+        if (!newImageUrl || !newImageUrl.startsWith("data:image/")) {
+          toast.error(
+            "이미지 용량이 커서 저장할 수 없습니다. 더 작은 이미지를 선택해주세요.",
+          );
           return;
         }
 

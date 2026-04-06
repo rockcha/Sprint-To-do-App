@@ -32,7 +32,7 @@ export default function DoneSection({
     if (item.id <= 0 || updatingIds.includes(item.id)) {
       return;
     }
-    router.push(`/todos/${item.id}`);
+    router.push(`/items/${item.id}`);
   };
 
   return (
@@ -81,7 +81,7 @@ export default function DoneSection({
                   onClick={() => handleGoDetail(item)}
                   onMouseEnter={() => {
                     if (item.id > 0) {
-                      router.prefetch(`/todos/${item.id}`);
+                      router.prefetch(`/items/${item.id}`);
                     }
                   }}
                   role="button"

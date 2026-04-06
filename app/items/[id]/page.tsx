@@ -17,7 +17,7 @@ export default async function DetailPage({
   const { id } = await params;
   const itemId = parseInt(id, 10);
 
-  if (isNaN(itemId)) {
+  if (Number.isNaN(itemId)) {
     return <div>잘못된 ID입니다.</div>;
   }
 
