@@ -202,6 +202,19 @@ export async function uploadTodoImage(
         console.log("반환된 이미지 URL (data.imageUrl):", imageUrl);
         return imageUrl;
       }
+
+      // item.imageUrl 확인
+      if (
+        "item" in result &&
+        typeof (result as { item: unknown }).item === "object" &&
+        (result as { item: unknown }).item !== null &&
+        "imageUrl" in ((result as { item: unknown }).item as object)
+      ) {
+        const imageUrl = (result as { item: { imageUrl: string } }).item
+          .imageUrl as string;
+        console.log("반환된 이미지 URL (item.imageUrl):", imageUrl);
+        return imageUrl;
+      }
     }
 
     console.error("예기치 않은 응답 형식:", result);

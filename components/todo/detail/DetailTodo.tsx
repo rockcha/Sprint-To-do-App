@@ -17,6 +17,13 @@ type DetailTodoProps = {
   tenantId: string;
 };
 
+function sanitizeImageUrl(url?: string | null): string {
+  if (!url || url.startsWith("blob:")) {
+    return "";
+  }
+  return url;
+}
+
 export default function DetailTodo({ initialItem, tenantId }: DetailTodoProps) {
   const router = useRouter();
   const [item, setItem] = useState<TodoItem>(initialItem);
@@ -24,7 +31,9 @@ export default function DetailTodo({ initialItem, tenantId }: DetailTodoProps) {
   const [memo, setMemo] = useState(initialItem.memo || "");
   const [isCompleted, setIsCompleted] = useState(initialItem.isCompleted);
   const [isLoading, setIsLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState(initialItem.imageUrl || "");
+  const [imageUrl, setImageUrl] = useState(
+    sanitizeImageUrl(initialItem.imageUrl),
+  );
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const handleToggle = () => {
@@ -94,13 +103,11 @@ export default function DetailTodo({ initialItem, tenantId }: DetailTodoProps) {
       const newImageUrl = await uploadTodoImage(tenantId, item.id, file);
       if (!newImageUrl) {
         console.error("이미지 업로드 실패: URL이 반환되지 않음");
-        toast.error("이미지 업로드에 실패했습니다.");
         return null;
       }
       return newImageUrl;
     } catch (error) {
       console.error("이미지 업로드 중 오류:", error);
-      toast.error("이미지 업로드 중 오류가 발생했습니다.");
       return null;
     }
   };
@@ -114,11 +121,15 @@ export default function DetailTodo({ initialItem, tenantId }: DetailTodoProps) {
 
     setIsLoading(true);
     try {
-      let finalImageUrl = imageUrl;
+      let uploadedImageUrl: string | null = null;
       if (imageFile) {
         const newImageUrl = await handleImageUploadToServer(imageFile);
         if (newImageUrl) {
-          finalImageUrl = newImageUrl;
+          uploadedImageUrl = newImageUrl;
+          setImageUrl(newImageUrl);
+        } else {
+          toast.error("이미지 업로드 확인에 실패했습니다. 다시 시도해주세요.");
+          return;
         }
       }
 
@@ -126,7 +137,7 @@ export default function DetailTodo({ initialItem, tenantId }: DetailTodoProps) {
         name: trimmedTitle,
         isCompleted,
         memo: memo || undefined,
-        ...(imageFile && { imageUrl: finalImageUrl }),
+        ...(uploadedImageUrl && { imageUrl: uploadedImageUrl }),
       };
 
       const updated = await updateTodoItem(tenantId, item.id, updateData);
