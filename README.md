@@ -1,55 +1,35 @@
 # Sprint Todo App
 
-A responsive Todo web app built with Next.js App Router.
+## 프로젝트 설명
 
-## Features
+Sprint Todo App은 할 일 관리를 위한 웹 애플리케이션입니다.
+할 일을 빠르게 기록하고, 진행 상태를 관리하고, 상세 내용을 수정할 수 있습니다.
+데스크톱/태블릿/모바일 환경에서 반응형으로 사용할 수 있습니다.
 
-- Add todos with toast feedback
-- Toggle complete/incomplete
-- Separate Todo and Done sections
-- Detail page for editing title, memo, and image
-- Image upload with file validation
-- Delete todo from detail page
-- Responsive layout for desktop/tablet/mobile
+## 주요 기능
 
-## Tech Stack
+1. 할 일 추가
+   새 할 일을 입력하고 추가 버튼으로 즉시 등록할 수 있습니다.
 
-- Next.js 16
-- React 19
-- TypeScript
-- CSS Modules
-- Sonner (toast)
+2. 진행 상태 변경
+   체크박스로 완료/미완료 상태를 손쉽게 전환할 수 있습니다.
 
-## Run Locally
+3. 목록 분리 보기
+   할 일(Todo)과 완료 항목(Done)을 분리해서 확인할 수 있습니다.
 
-1. Install dependencies
+4. 상세 페이지 편집
+   항목을 선택하면 상세 페이지에서 제목, 메모, 이미지를 수정할 수 있습니다.
 
-```bash
-npm install
-```
+5. 이미지 업로드
+   이미지 첨부 및 수정이 가능하며, 업로드 조건(파일명/용량)을 검사합니다.
 
-2. Create `.env.local`
+6. 항목 삭제
+   상세 페이지에서 삭제 버튼으로 항목을 제거할 수 있습니다.
 
-```dotenv
-TENANT_ID=rokchalatte
-NEXT_PUBLIC_TENANT_ID=rokchalatte
-```
+## 사용 흐름
 
-3. Start development server
-
-```bash
-npm run dev
-```
-
-4. Open browser
-
-```text
-http://localhost:3000
-```
-
-## Build
-
-```bash
-npm run build
-npm run start
-```
+1. 홈에서 새 할 일을 등록합니다.
+2. 체크박스로 완료 여부를 관리합니다.
+3. 항목을 눌러 상세 페이지로 이동합니다.
+4. 제목/메모/이미지를 수정하고 저장합니다.
+5. 필요 시 항목을 삭제합니다.
