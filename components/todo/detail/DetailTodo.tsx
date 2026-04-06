@@ -12,13 +12,12 @@ import {
 import type { TodoItem } from "@/types/todo";
 import styles from "./DetailTodo.module.css";
 
-const TENANT_ID = process.env.NEXT_PUBLIC_TENANT_ID || "rokchalatte";
-
 type DetailTodoProps = {
   initialItem: TodoItem;
+  tenantId: string;
 };
 
-export default function DetailTodo({ initialItem }: DetailTodoProps) {
+export default function DetailTodo({ initialItem, tenantId }: DetailTodoProps) {
   const router = useRouter();
   const [item, setItem] = useState<TodoItem>(initialItem);
   const [title, setTitle] = useState(initialItem.name);
@@ -92,7 +91,7 @@ export default function DetailTodo({ initialItem }: DetailTodoProps) {
     file: File,
   ): Promise<string | null> => {
     try {
-      const newImageUrl = await uploadTodoImage(TENANT_ID, item.id, file);
+      const newImageUrl = await uploadTodoImage(tenantId, item.id, file);
       if (!newImageUrl) {
         console.error("이미지 업로드 실패: URL이 반환되지 않음");
         toast.error("이미지 업로드에 실패했습니다.");
@@ -130,7 +129,7 @@ export default function DetailTodo({ initialItem }: DetailTodoProps) {
         ...(imageFile && { imageUrl: finalImageUrl }),
       };
 
-      const updated = await updateTodoItem(TENANT_ID, item.id, updateData);
+      const updated = await updateTodoItem(tenantId, item.id, updateData);
 
       if (updated) {
         setItem(updated);
@@ -155,7 +154,7 @@ export default function DetailTodo({ initialItem }: DetailTodoProps) {
 
     setIsLoading(true);
     try {
-      const success = await deleteTodoItem(TENANT_ID, item.id);
+      const success = await deleteTodoItem(tenantId, item.id);
 
       if (success) {
         toast.success("삭제되었습니다!");
